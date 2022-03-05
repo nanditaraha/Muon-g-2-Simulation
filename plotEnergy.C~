@@ -1,0 +1,110 @@
+#include "TFile.h"
+#include "TTree.h"
+#include <vector>
+#include "TH1D.h"
+#include "TH2D.h"
+#include "TCanvas.h"
+#include <TChain.h>
+#include <TLatex.h>
+#include "TSystem.h"
+#include "TBenchmark.h"
+#include "TStyle.h"
+#include <iostream>
+#include <fstream>
+#include <stdio.h>
+#include<TProfile.h>
+#include<TDirectory.h>
+
+const int X=54;//no of xtals
+
+void plotEnergy(TString fileName="~/Research/g-2/work/simulations/B4c-build/B4.root")
+
+{ 
+  gStyle->SetOptFit(1);
+  gStyle->SetPalette(1);
+  gStyle->SetTitleW(1.0);
+  gStyle->SetTitleH(0.1);
+
+  TH1D *hCrystal_En[X];//last calo - input E0 here
+  //TH1D *hCryEn[9];//last calo - input E0 here
+  TH2D *hE_Crystal = new TH2D("EX","",500,0,3100,54,054);//last calo - input E0 here
+  
+  for(int i=0;i<X;i++){
+    hCrystal_En[i] = new TH1D("hE","",500,0,3100);
+    hCrystal_En[i]->SetName(Form("E_%d",i+1));
+    hCrystal_En[i]->GetXaxis()->SetTitle("MeV");
+    hCrystal_En[i]->GetXaxis()->SetNdivisions(5);
+    hCrystal_En[i]->GetYaxis()->SetLabelSize(0.06);
+    hCrystal_En[i]->GetXaxis()->SetLabelSize(0.06);
+    hCrystal_En[i]->SetName(Form("E_%d",i+1));
+  }
+
+  TFile *file = TFile::Open(fileName,"READ");
+  if (!file) { return; }
+  
+  TTree *tree  = (TTree*)file->Get("B4");
+  int nentries = tree->GetEntries();
+
+  Double_t Ecalo, xtal;
+  
+  tree->SetBranchAddress("Ecalo",&Ecalo);
+  tree->SetBranchAddress("Crystal#",&xtal);
+
+  for (int i = 0; i < nentries; i++) {
+    if(!tree->GetEntry(i)) continue;
+    
+    int index = (int)xtal;
+    hCrystal_En[index]->Fill(Ecalo);
+    hE_Crystal->Fill(Ecalo,xtal);
+
+  }
+
+  int j = 0;
+  TCanvas *c = new TCanvas();
+  c->Divide(3,3); 
+  for(int i=0;i<X;i++){
+    if(hCrystal_En[i]->GetEntries()>10)//Entries <10 are meaningless
+      {
+	c->cd(j+1);
+	hCrystal_En[i]->SetStats(0);    
+
+	int m = hCrystal_En[i]->GetMaximumBin();
+	int max_e = hCrystal_En[i]->GetXaxis()->GetXmax();
+	double peak = hCrystal_En[i]->GetBinContent(m);
+	double peakEne = hCrystal_En[i]->GetBinCenter(m);
+	double mean = hCrystal_En[i]->GetMean();    
+	double min = 0;
+	double max = 200;
+    
+	if(peakEne>2000)
+	  {
+	    min = peakEne - peakEne*0.2;
+	    max = peakEne + peakEne*0.1;
+	  }
+    
+	hCrystal_En[i]->GetXaxis()->SetRangeUser(min,max);
+	hCrystal_En[i]->Draw();
+	
+	//To print peak energy value  
+	TLatex *l2 = new TLatex((min+max)/2.,peak-peak/10.,Form("Peak = %0.2f",peakEne));
+	//TLatex *l2 = new TLatex(500,peak-peak/10.,Form("Peak = %d",max_e));
+	l2->SetTextSize(0.075);
+	l2->Draw("same");
+	
+	TLatex *l1 = new TLatex((min+max)/2.,peak-peak/5.,Form("Crystal# = %d",i));
+	//TLatex *l2 = new TLatex(500,peak-peak/10.,Form("Peak = %d",max_e));
+	l1->SetTextSize(0.075);
+	l1->Draw("same");
+	
+	TLatex *l = new TLatex((min+max)/2.,peak-3*peak/10.,Form("No. of hits = %0.0f",hCrystal_En[i]->GetEntries()));
+	//TLatex *l2 = new TLatex(500,peak-peak/10.,Form("Peak = %d",max_e));
+	l->SetTextSize(0.075);
+	l->Draw("same");
+	j++;	
+      }
+    
+    
+  }
+}    
+  
+
