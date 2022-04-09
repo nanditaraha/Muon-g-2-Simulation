@@ -50,3 +50,4 @@ $ cd geant4.10.04.p02-build</br>
   $ make -jN</br>
 $ make install</br>
 Make sure to source geant4.sh before each usage!</br>
+I prefer to make copies of build and renamed them to My_B1_build and My_B1 and append/change the code according to the needs of the expt. 
