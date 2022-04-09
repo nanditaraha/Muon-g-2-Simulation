@@ -1,4 +1,4 @@
-# Simulation of Positron Shower Leakage for the Muon g-2 Experiment at Fermilab.
+# Simulation of Positron Shower Leakage for the Muon g-2 Experiment.
 The Muon g-2 experiment uses 24 calorimeters surrounding a circular storage ring. Each calorimeter is made up of a matrix of 9×6 segmented PbF<sub>2</sub> crystals (2.5×2.5×14 cm3) read by Silicon Photo Multipliers (SiPMs).
 This GEANT4 simulation is to understand and quantify the leakage of the positron showers in the passage through these crystals and then add it back
 to the observed energy.  The visualization of 10000 events passing through the center of a particular crystal is shown below:</br>
