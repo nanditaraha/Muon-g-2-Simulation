@@ -23,7 +23,7 @@ The &chi;<sup>2</sup>/NDF indicates the goodness of fit and this simulation.
 These are the instructions for installing GEANT4 in mac OSX:
 <ol> <li> Download Geant4 source code.</li>
   <li> Configure the build using CMake <b>(CMake version 3.3+) and GCC 4.8.5+, clang 3.6+ </b></li>
-  <ul> In mac OSX install <li> CMake using the Darwin64 dmg installerpackage<\li> <li> Qt4 or Qt5<\li> <li> X11<\li> 
+  <ul> In mac OSX install <li> CMake using the Darwin64 dmg installerpackage</li> <li> Qt4 or Qt5</li> <li> X11</li> 
    <li> Make & install </li> 
    <li> Configure environment to use Geant4 </li>
     <ul> Download and install Geant4:
